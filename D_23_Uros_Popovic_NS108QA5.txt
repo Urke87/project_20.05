@@ -1,0 +1,200 @@
+import java.util.ArrayList;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Planina planina = new Planina("Kopaonik", "Srbija", 1500);
+
+        ArrayList<Planinar> planinari = new ArrayList<>();
+        planinari.add(new RekreativniPlaninar("333", "Petar", "Petrovic",
+                17, "Sombor", 3800));
+        planinari.add(new RekreativniPlaninar("500", "Djordje", "Mitrovic",
+                20, "Novi Sad", 3250));
+        planinari.add(new RekreativniPlaninar("129", "Dragan", "Ajdinovic",
+                15, "Topusko", 4200));
+
+        planinari.add(new Alpinista("121", "Bojan", "Bogovac",
+                45));
+        planinari.add(new Alpinista("227", "Milica", "Milsa",
+                41));
+        planinari.add(new Alpinista("322", "Nebojsa", "Necak",
+                14));
+
+        int ukupnaClanarina = 0;
+        for (Planinar planinar : planinari) {
+            planinar.stampaj();
+            if (planinar.uspesanUspon(planina)) {
+                System.out.println("Uspesan uspon!");
+            } else {
+                System.out.println("Neuspesan uspon!");
+            }
+            ukupnaClanarina += planinar.clanarina();
+        }
+
+        System.out.println(ukupnaClanarina);
+    }
+}
+
+
+
+
+public class Planina {
+
+    private String imePlanine;
+    private String nazivDrzave;
+    private int visinaPlanine;
+
+    public Planina() {
+    }
+
+    public Planina(String imePlanine, String nazivDrzave, int visinaPlanine) {
+        this.imePlanine = imePlanine;
+        this.nazivDrzave = nazivDrzave;
+        this.visinaPlanine = visinaPlanine;
+    }
+
+    public String getImePlanine() {
+        return imePlanine;
+    }
+
+    public void setImePlanine(String imePlanine) {
+        this.imePlanine = imePlanine;
+    }
+
+    public String getNazivDrzave() {
+        return nazivDrzave;
+    }
+
+    public void setNazivDrzave(String nazivDrzave) {
+        this.nazivDrzave = nazivDrzave;
+    }
+
+    public int getVisinaPlanine() {
+        return visinaPlanine;
+    }
+
+    public void setVisinaPlanine(int visinaPlanine) {
+        if (visinaPlanine < 0) {
+            this.visinaPlanine = visinaPlanine;
+        } else {
+            System.err.println("Nevalidna vrednost!");
+        }
+    }
+}
+
+
+
+
+public abstract class Planinar {
+    private String id;
+    private String imePlaninara;
+    private String prezimePlaninara;
+
+
+    public Planinar() {
+
+    }
+
+    public Planinar(String id, String imePlaninara, String prezimePlaninara) {
+        this.id = id;
+        this.imePlaninara = imePlaninara;
+        this.prezimePlaninara = prezimePlaninara;
+    }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public String getImePlaninara() {
+        return imePlaninara;
+    }
+
+    public String getPrezimePlaninara() {
+        return prezimePlaninara;
+    }
+
+    public abstract void stampaj();
+
+    public abstract double clanarina();
+
+
+    public abstract boolean uspesanUspon(Planina planina);
+}
+
+
+
+
+
+public class RekreativniPlaninar extends Planinar {
+    private int tezinaOpreme;
+    private String nazivOkruga;
+    private int maksimalniUspon;
+    private static final int clanarina = 1000;
+
+    public RekreativniPlaninar() {
+    }
+    public RekreativniPlaninar(String id, String imePlaninara, String prezimePlaninara, int tezinaOpreme, String nazivOkruga, int maksimalniUspon) {
+        super(id, imePlaninara, prezimePlaninara);
+        this.tezinaOpreme = tezinaOpreme;
+        this.nazivOkruga = nazivOkruga;
+        this.maksimalniUspon = maksimalniUspon;
+    }
+
+    @Override
+    public void stampaj() {
+        System.out.println("Rekreativac, id: " + getId() + "\n" +
+                "ime: " + getImePlaninara() + " " + getPrezimePlaninara() + " Okrug: " + nazivOkruga);
+    } //pod stampaj ide TOSTRING
+
+    @Override
+    public double clanarina() {
+
+        return clanarina;
+    }
+
+    @Override
+    public boolean uspesanUspon(Planina planina) {
+        return (maksimalniUspon - (tezinaOpreme * 50)) > planina.getVisinaPlanine();
+    }
+}
+
+
+
+
+
+public class Alpinista extends Planinar {
+
+    private int brojPoena;
+
+    public Alpinista() {
+    }
+
+    public Alpinista(String id, String imePlaninara, String prezimePlaninara, int brojPoena) {
+        super(id, imePlaninara, prezimePlaninara);
+        this.brojPoena = brojPoena;
+    }
+
+    @Override
+    public void stampaj() {
+        System.out.println("Alpinista, id: " + getId() + "\n" +
+                "ime: " + getImePlaninara() + " " + getPrezimePlaninara() + "\nBroj poena: " + brojPoena);
+    }
+
+    @Override
+    public double clanarina() {
+        int clanarina = 1500 - (brojPoena * 50);
+        if (clanarina > 0)
+            return clanarina;
+        else
+            return 0;
+    }
+
+    @Override
+    public boolean uspesanUspon(Planina planina) {
+
+        return planina.getVisinaPlanine() <= 4000;
+    }
+}
+
